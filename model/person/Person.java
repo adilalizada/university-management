@@ -12,7 +12,7 @@ public abstract class Person {
     private final LocalDate dateOfBirth;
 
     protected Person(int id, String fullName, String address, String phone, String email, LocalDate dateOfBirth) {
-        this.id = id;
+        this.id = validateId(id); //checking for neg val
         this.fullName = fullName;
         this.address = address;
         this.phone = phone;
@@ -21,12 +21,22 @@ public abstract class Person {
     }
 
     protected Person(int id, String fullName, LocalDate dateOfBirth) {
-        this.id = id;
+        this.id = validateId(id);
         this.fullName = fullName;
         this.dateOfBirth = dateOfBirth;
     }
 
-    // Getters
+    private static int validateId(int id) { //try catch block
+        try {
+            if (id < 0) {
+                throw new IllegalArgumentException("Student ID can't be negative.");
+            }
+            return id;
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
+            return 0; // return 0 if invalid id
+        }
+    }
     public int getId() { return id; }
     public String getFullName() { return fullName; }
     public String getAddress() { return address; }
@@ -38,7 +48,6 @@ public abstract class Person {
         Period period = Period.between(this.dateOfBirth, today);
         return period.getYears();
     }
-    // Setters
     public void setAddress(String address) { this.address = address; }
     public void setPhone(String phone) { this.phone = phone; }
     public void setEmail(String email) { this.email = email; }
@@ -46,9 +55,9 @@ public abstract class Person {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Person)) return false; // for subclasses
+        if (!(o instanceof Person)) return false;
         Person person = (Person) o;
-        return id == person.id; // id is unique
+        return id == person.id;
     }
 
     @Override
@@ -64,4 +73,4 @@ public abstract class Person {
         sb.append("}");
         return sb.toString();
     }
-}    
+}
