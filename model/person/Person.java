@@ -12,11 +12,11 @@ public abstract class Person {
     private final LocalDate dateOfBirth;
 
     protected Person(int id, String fullName, String address, String phone, String email, LocalDate dateOfBirth) {
-        this.id = validateId(id); //checking for neg val
+        this.id = validateId(id); // checking for neg val
         this.fullName = fullName;
         this.address = address;
-        this.phone = phone;
-        this.email = email;
+        this.phone = validatePhone(phone); // checking phone format
+        this.email = validateEmail(email); // checking email format
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -26,7 +26,7 @@ public abstract class Person {
         this.dateOfBirth = dateOfBirth;
     }
 
-    private static int validateId(int id) { //try catch block
+    private static int validateId(int id) { // try catch block
         try {
             if (id < 0) {
                 throw new IllegalArgumentException("Student ID can't be negative.");
@@ -37,6 +37,31 @@ public abstract class Person {
             return 0; // return 0 if invalid id
         }
     }
+
+    private static String validateEmail(String email) { // trycatch block
+        try {
+            if (email == null || !email.contains("@") || !email.contains(".")) {
+                throw new IllegalArgumentException("Invalid email format.");
+            }
+            return email;
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
+            return "Invalid Email"; // return default if invalid
+        }
+    }
+
+    private static String validatePhone(String phone) { // try catch block
+        try {
+            if (phone == null || !phone.matches("\\d{7,}")) { // regex to check only digits & min 7 chars
+                throw new IllegalArgumentException("Invalid phone number format");
+            }
+            return phone;
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
+            return "Invalid phone"; // return default if invalid
+        }
+    }
+
     public int getId() { return id; }
     public String getFullName() { return fullName; }
     public String getAddress() { return address; }
@@ -49,8 +74,8 @@ public abstract class Person {
         return period.getYears();
     }
     public void setAddress(String address) { this.address = address; }
-    public void setPhone(String phone) { this.phone = phone; }
-    public void setEmail(String email) { this.email = email; }
+    public void setPhone(String phone) { this.phone = validatePhone(phone); } // validate on set
+    public void setEmail(String email) { this.email = validateEmail(email); } // validate on set
 
     @Override
     public boolean equals(Object o) {
@@ -74,3 +99,4 @@ public abstract class Person {
         return sb.toString();
     }
 }
+
